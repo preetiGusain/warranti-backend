@@ -4,23 +4,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 const router = express.Router();
 
-//Signup
-router.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const exisitingUser = await User.findOne({ username });
-        if(exisitingUser) {
-            return res.status(400).json({message: 'Username already taken'});
-        }
-
-        //new users
-        const user = new User({ username, password });
-        await user.save();
-        res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error registering user', error: error.message});
-    }
-});
 
 //Login
 router.post('/login', async (req, res) => {

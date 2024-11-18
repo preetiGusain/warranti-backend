@@ -1,8 +1,60 @@
 const passport = require('passport');
+const localStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const UserModel = require('../models/users');
 
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+    UserModel.findById(id, function (err, user) {
+        done(err, user);
+    })
+});
+
+//Create a passport middleware to handle user registration
+passport.use(
+    'signup',
+    new localStrategy(
+        {
+            usernameField: 'email',
+            passwordField: 'password',
+        },
+        async (email, password, done) => {
+            try {
+                await UserModel.findOne({ email }, (err, user) => {
+                    if (err) {
+                        return done(err, null);
+                    }
+                    if (user) {
+                        return done('User already exists', null);
+                    }
+                    user = new UserModel({
+                        email,
+                        password,
+                    });
+                    user = new UserModel({
+                        email,
+                        password,
+                    });
+                    user.save((err, user) => {
+                        if (err) {
+                            return done(err, null);
+                        }
+                        //delete user.password;
+                        return done(null, user, { message: 'Sign up Successful' });
+                    });
+                });
+            } catch (error) {
+                done(error);
+            }
+        }
+    )
+);
+
+//Google OAuth Strategy
 passport.use(
     'google',
     new GoogleStrategy({
