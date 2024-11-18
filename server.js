@@ -2,12 +2,13 @@ const express = require('express');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const connectDB = require('./config/db');
+const passport = require('passport');
 
 dotenv.config();
 const app = express();
 
-// Connect to the database
 connectDB();
+require('./passport');
 
 //Middleware
 app.use(express.json());
@@ -18,6 +19,10 @@ app.use('/auth', authRoutes);
 app.get('/', (req, res) => {
     res.send('<a href="/auth/google">Authenticate with Google</a>');
 });
+
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['email', 'profile'] })
+);
 
 app.get('/protected', (req, res) => {
     res.send('Hello!');
