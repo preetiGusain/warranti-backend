@@ -53,6 +53,16 @@ app.get('/', (req, res) => {
     res.json({ message: 'Backend server running' });
 });
 
+//Handle Errors
+app.use(function (error, req, res, next) {
+    res.status(error.status || 500).send({
+        error: {
+            status: error.status || 500,
+            message: error.message || 'Internal Server Error',
+        },
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
