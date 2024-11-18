@@ -8,10 +8,14 @@ passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-passport.deserializeUser(function (id, done) {
-    UserModel.findById(id, function (err, user) {
-        done(err, user);
-    })
+passport.deserializeUser(async function (id, done) {
+    try {
+        const user = await UserModel.findById(id);
+        done(null, user);
+    } catch (error) {
+        console.log('Error in deserilizeUser:', error);
+        done(err, null);
+    }
 });
 
 //Passport middleware to handle user registration
@@ -24,31 +28,23 @@ passport.use(
         },
         async (email, password, done) => {
             try {
-                await UserModel.findOne({ email }, (err, user) => {
-                    if (err) {
-                        return done(err, null);
-                    }
-                    if (user) {
-                        return done('User already exists', null);
-                    }
-                    user = new UserModel({
-                        email,
-                        password,
-                    });
-                    user = new UserModel({
-                        email,
-                        password,
-                    });
-                    user.save((err, user) => {
-                        if (err) {
-                            return done(err, null);
-                        }
-                        //delete user.password;
-                        return done(null, user, { message: 'Sign up Successful' });
-                    });
+                // Check if the user already exists
+                const existingUser = await UserModel.findOne({ email });
+                if (existingUser) {
+                    return done('User already exists', null);
+                }
+
+                // Create a new user
+                const user = new UserModel({
+                    email,
+                    password,
                 });
+
+                await user.save();
+                return done(null, user, { message: 'Signed up successfully' });
             } catch (error) {
-                done(error);
+                console.error('Error in signing up:', error);
+                return done(error, null);
             }
         }
     )
