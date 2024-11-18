@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/api/signup');
 const connectDB = require('./config/db');
 const passport = require('passport');
 
