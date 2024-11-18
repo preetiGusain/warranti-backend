@@ -14,7 +14,7 @@ passport.deserializeUser(function (id, done) {
     })
 });
 
-//Create a passport middleware to handle user registration
+//Passport middleware to handle user registration
 passport.use(
     'signup',
     new localStrategy(
@@ -54,6 +54,32 @@ passport.use(
     )
 );
 
+//Passport middleware to handle User login
+passport.use(
+    'login',
+    new localStrategy(
+        {
+            usernameField: 'email',
+            passwordField: 'password',
+        },
+        async (email, password, done) => {
+            try {
+                const user = await UserModel.findOne({ email });
+                if (!user) {
+                    return done('Email or Password not valid', false);
+                }
+                const validate = await user.isValidPassword(password);
+                if (!validate) {
+                    return done('Email or Password not valid', false);
+                }
+                return done(null, user, { message: 'Logged in success' });
+            } catch (error) {
+                return done(error);
+            }
+        }
+    )
+);
+
 //Google OAuth Strategy
 passport.use(
     'google',
@@ -67,7 +93,7 @@ passport.use(
                 const currentUser = await UserModel.findOne({
                     googleId: profile.id,
                 });
-                // Creating new user if the user doesn't exist in db
+                // Creating a new user if the user doesn't exist in db
                 if (!currentUser) {
                     const newUser = await new UserModel({
                         googleId: profile.id,
