@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // CORS configuration
 app.use(
     cors({
-        origin: 'http://localhost:3000',
+        origin: 'http://localhost:3001',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true,
     })

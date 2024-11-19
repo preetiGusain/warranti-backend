@@ -1,6 +1,7 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 const UserModel = require('../models/users');
 
@@ -14,7 +15,7 @@ passport.deserializeUser(async function (id, done) {
         done(null, user);
     } catch (error) {
         console.log('Error in deserilizeUser:', error);
-        done(err, null);
+        done(error, null);
     }
 });
 
@@ -82,7 +83,7 @@ passport.use(
     new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/google/callback"
+        callbackURL: "http://localhost:3000/oauth/google/callback"
     },
         async (accessToken, refreshToken, profile, done) => {
             try {
@@ -92,6 +93,7 @@ passport.use(
                 // Creating a new user if the user doesn't exist in db
                 if (!currentUser) {
                     const newUser = await new UserModel({
+                        username: profile.username || 'defaultUsername',
                         googleId: profile.id,
                         email: profile._json.email,
                     }).save();
@@ -104,4 +106,38 @@ passport.use(
                 return done(error);
             }
         }
-    ));
+    )
+);
+
+//facebook oauth
+passport.use(
+    'facebook',
+    new FacebookStrategy(
+        {
+            clientID: process.env.FACEBOOK_CLIENT_ID,
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+            callbackURL: '/oauth/facebook/callback',
+            profileFields: ['email', 'name', 'id'],
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                const currentUser = await UserModel.findOne({
+                    facebookId: profile.id,
+                });
+                // create new user if the db
+                if (!currentUser) {
+                    const newUser = await new UserModel({
+                        facebookId: profile.id,
+                        email: profile._json.last_name,
+                    }).save();
+                    if (newUser) {
+                        done(null, newUser);
+                    }
+                }
+                done(null, currentUser);
+            } catch (error) {
+                return done(error);
+            }
+        }
+    )
+);
