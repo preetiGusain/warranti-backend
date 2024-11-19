@@ -31,7 +31,7 @@ app.use(
 //Session management
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || 'Our secret.',
+        secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         maxAge: 24 * 60 * 60 * 100, //Cookie expiration

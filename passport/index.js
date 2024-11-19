@@ -2,6 +2,7 @@ const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
+const { v4: uuidv4 } = require('uuid');
 
 const UserModel = require('../models/users');
 
@@ -35,10 +36,21 @@ passport.use(
                     return done('User already exists', null);
                 }
 
+                const username = email.split('@')[0];
+                if (!username) {
+                    return done('Invalid username', null);
+                }
+                const existingUsername = await UserModel.findOne({ username });
+                if (existingUsername) {
+                    return done('Username already taken', null);
+                }
+
                 // Create a new user
                 const user = new UserModel({
+                    username,
                     email,
                     password,
+                    googleId: uuidv4(),
                 });
 
                 await user.save();
@@ -92,17 +104,26 @@ passport.use(
                 });
                 // Creating a new user if the user doesn't exist in db
                 if (!currentUser) {
-                    const newUser = await new UserModel({
-                        username: profile.username || 'defaultUsername',
+                    let username = profile.username || profile.displayName || profile._json.email.split('@')[0];
+
+                    let existingUsername = await UserModel.findOne({ username });
+                    while (existingUsername) {
+                        // If the username exists, generate a new unique one (e.g., appending a number or a random string)
+                        username = `${username}${Math.floor(Math.random() * 1000)}`;
+                        existingUsername = await UserModel.findOne({ username });
+                    }
+
+                    const newUser = new UserModel({
+                        username,
                         googleId: profile.id,
                         email: profile._json.email,
-                    }).save();
-                    if (newUser) {
-                        done(null, newUser);
-                    }
+                    });
+                    await newUser.save();
+                    return done(null, newUser);
                 }
-                done(null, currentUser);
+                return done(null, currentUser);
             } catch (error) {
+                console.error('Error in Google OAuth Strategy:', error);
                 return done(error);
             }
         }
@@ -110,34 +131,34 @@ passport.use(
 );
 
 //facebook oauth
-passport.use(
-    'facebook',
-    new FacebookStrategy(
-        {
-            clientID: process.env.FACEBOOK_CLIENT_ID,
-            clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-            callbackURL: '/oauth/facebook/callback',
-            profileFields: ['email', 'name', 'id'],
-        },
-        async (accessToken, refreshToken, profile, done) => {
-            try {
-                const currentUser = await UserModel.findOne({
-                    facebookId: profile.id,
-                });
-                // create new user if the db
-                if (!currentUser) {
-                    const newUser = await new UserModel({
-                        facebookId: profile.id,
-                        email: profile._json.last_name,
-                    }).save();
-                    if (newUser) {
-                        done(null, newUser);
-                    }
-                }
-                done(null, currentUser);
-            } catch (error) {
-                return done(error);
-            }
-        }
-    )
-);
+// passport.use(
+//     'facebook',
+//     new FacebookStrategy(
+//         {
+//             clientID: process.env.FACEBOOK_CLIENT_ID,
+//             clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+//             callbackURL: '/oauth/facebook/callback',
+//             profileFields: ['email', 'name', 'id'],
+//         },
+//         async (accessToken, refreshToken, profile, done) => {
+//             try {
+//                 const currentUser = await UserModel.findOne({
+//                     facebookId: profile.id,
+//                 });
+//                 // create new user if the db
+//                 if (!currentUser) {
+//                     const newUser = await new UserModel({
+//                         facebookId: profile.id,
+//                         email: profile._json.last_name,
+//                     }).save();
+//                     if (newUser) {
+//                         done(null, newUser);
+//                     }
+//                 }
+//                 done(null, currentUser);
+//             } catch (error) {
+//                 return done(error);
+//             }
+//         }
+//     )
+// );
