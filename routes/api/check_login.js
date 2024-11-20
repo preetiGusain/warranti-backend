@@ -2,11 +2,12 @@ const express = require('express');
 
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-    if (!req.user) {
-        throw new Error('User not authenticated!');
+router.get('/', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json({ user: req.user }); // Return user details
+    } else {
+        res.status(401).json({ error: { message: 'Not authenticated' } });
     }
-    res.json(req.user);
 })
 
 module.exports = router;
