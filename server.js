@@ -9,7 +9,7 @@ const cors = require('cors');
 const checkEnvVariables = require('dotenv-verifier');
 
 dotenv.config();
-const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET'];
+const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET', 'FRONTEND_URI'];
 checkEnvVariables(requiredVariables);
 
 const app = express();

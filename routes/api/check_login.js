@@ -8,6 +8,6 @@ router.get('/', (req, res) => {
     } else {
         res.status(401).json({ error: { message: 'Not authenticated' } });
     }
-})
+});
 
 module.exports = router;
