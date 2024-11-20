@@ -47,11 +47,11 @@ app.use(passport.session());
 
 
 //Backend Routes
-app.use('/signup', require('./routes/api/signup'));
-app.use('/login_check', require('./routes/api/check_login'));
-app.use('/login', require('./routes/api/login'));
-app.use('/logout', require('./routes/api/logout'));
-app.use('/oauth', require('./routes/api/oauth'));
+app.use('/signup', require('./routes/auth/signup'));
+app.use('/login_check', require('./routes/auth/check_login'));
+app.use('/login', require('./routes/auth/login'));
+app.use('/logout', require('./routes/auth/logout'));
+app.use('/oauth', require('./routes/auth/oauth'));
 
 //Root endpoint
 app.get('/', (req, res) => {

@@ -1,7 +1,6 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
 const { v4: uuidv4 } = require('uuid');
 
 const UserModel = require('../models/users');
@@ -129,36 +128,3 @@ passport.use(
         }
     )
 );
-
-//facebook oauth
-// passport.use(
-//     'facebook',
-//     new FacebookStrategy(
-//         {
-//             clientID: process.env.FACEBOOK_CLIENT_ID,
-//             clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-//             callbackURL: '/oauth/facebook/callback',
-//             profileFields: ['email', 'name', 'id'],
-//         },
-//         async (accessToken, refreshToken, profile, done) => {
-//             try {
-//                 const currentUser = await UserModel.findOne({
-//                     facebookId: profile.id,
-//                 });
-//                 // create new user if the db
-//                 if (!currentUser) {
-//                     const newUser = await new UserModel({
-//                         facebookId: profile.id,
-//                         email: profile._json.last_name,
-//                     }).save();
-//                     if (newUser) {
-//                         done(null, newUser);
-//                     }
-//                 }
-//                 done(null, currentUser);
-//             } catch (error) {
-//                 return done(error);
-//             }
-//         }
-//     )
-// );
