@@ -1,12 +1,12 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const connectDB = require('./config/db');
 const passport = require('passport');
 const session = require('express-session');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const checkEnvVariables = require('dotenv-verifier');
+const connectDB = require('./config/db');
 
 dotenv.config();
 const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET', 'FRONTEND_URI'];
@@ -47,11 +47,9 @@ app.use(passport.session());
 
 
 //Backend Routes
-app.use('/signup', require('./routes/auth/signup'));
-app.use('/login_check', require('./routes/auth/check_login'));
-app.use('/login', require('./routes/auth/login'));
-app.use('/logout', require('./routes/auth/logout'));
-app.use('/oauth', require('./routes/auth/oauth'));
+app.use('/auth', require('./routes/auth'));
+
+app.use('/oauth', require('./routes/oauth'));
 
 //Root endpoint
 app.get('/', (req, res) => {

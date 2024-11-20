@@ -1,10 +1,10 @@
-const express = require('express');
 const passport = require('passport');
-
-const router = express.Router();
-
-
-router.post('/', async (req, res, next) => {
+/**
+ * @desc    Login the customer
+ * @route   POST /auth/login
+ * @access  Public
+ */
+exports.login = async (req, res, next) => {
     passport.authenticate('login', async (error, user, info) => {
         try {
             if (error) {
@@ -36,12 +36,4 @@ router.post('/', async (req, res, next) => {
             return next(error);
         }
     })(req, res, next);
-});
-
-router.get('/fail', (req, res) => {
-    res.status(401).json({
-        message: 'User failed to authenticate'
-    });
-});
-
-module.exports = router;
+}

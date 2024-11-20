@@ -1,17 +1,17 @@
 const express = require('express');
 const passport = require('passport');
+const { googleAuthenticate } = require('../controllers/oauth/google/authenticate');
+const { googleCallback } = require('../controllers/oauth/google/callback');
 
 const router = express.Router();
 
-router.get('/google', 
-    passport.authenticate('google', {scope: ['profile', 'email'] })
+router.get('/google',
+    googleAuthenticate
 );
 
 router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/login'}),
-    (req, res) => {
-        res.redirect(`${process.env.FRONTEND_URI}/dashboard`);
-    }
+    googleCallback
 );
 
 module.exports = router;
