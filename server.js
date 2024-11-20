@@ -6,8 +6,12 @@ const session = require('express-session');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const checkEnvVariables = require('dotenv-verifier');
 
 dotenv.config();
+const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET'];
+checkEnvVariables(requiredVariables);
+
 const app = express();
 const PORT = process.env.PORT;
 
