@@ -1,12 +1,14 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const passport = require('passport');
 const session = require('express-session');
 const compression = require('compression');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const checkEnvVariables = require('dotenv-verifier');
 const connectDB = require('./config/db');
+
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const passport = require('passport');
+const MongoStore = require('connect-mongo');
 
 dotenv.config();
 const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET', 'FRONTEND_URI'];
@@ -18,19 +20,19 @@ const PORT = process.env.PORT;
 connectDB();
 require('./passport');
 
-//Middleware
-app.use(compression());
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
 // CORS configuration
 app.use(
     cors({
-        origin: 'http://localhost:3001',
+        origin: process.env.FRONTEND_URI,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true,
     })
 );
+
+//Middleware
+app.use(compression());
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //Session management
 app.use(
@@ -38,7 +40,16 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
-        maxAge: 24 * 60 * 60 * 100, //Cookie expiration
+        cookie: {
+            secure: process.env.NODE_ENV === 'production',
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
+        },
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI,
+            collectionName: 'sessions',
+            ttl: 24 * 60 * 60, // 1 day
+        }),
     })
 );
 
@@ -48,7 +59,6 @@ app.use(passport.session());
 
 //Backend Routes
 app.use('/auth', require('./routes/auth'));
-
 app.use('/oauth', require('./routes/oauth'));
 
 //Root endpoint
