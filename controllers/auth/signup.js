@@ -20,6 +20,6 @@ exports.signup = async (req, res, next) => {
     await user.save();
     req.login(user, function (err) {
         if (err) { return next(err); }
-        res.status(200).json({ message: 'Logged In Succesfully' });
+        res.status(200).json({ message: 'Signed up Succesfully' });
     });
 }

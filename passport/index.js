@@ -55,34 +55,34 @@ passport.use(
     },
         async (accessToken, refreshToken, profile, done) => {
             console.log(profile);
-            
+
             try {
                 const userExistsWithGoogleId = await UserModel.findOne({
                     googleId: profile.id,
                 });
-                if(userExistsWithGoogleId) {
+                if (userExistsWithGoogleId) {
                     return done(null, userExistsWithGoogleId);
                 }
 
                 const userExistsWithGivenEmail = await UserModel.findOne({
                     email: profile?.emails[0]?.value,
                 });
-                if(userExistsWithGivenEmail) {
-                    throw new Error('Login With Email/Password')
+                if (userExistsWithGivenEmail) {
+                    // If the email exists but not linked to Google, redirect them to login
+                    return res.redirect(`${process.env.FRONTEND_URI}/login`);
                 }
 
                 // Creating a new user if the user doesn't exist in db
-                if (!userExistsWithGoogleId && !userExistsWithGivenEmail) {
-                    const newUser = new UserModel({
-                        firstName: profile.name.givenName,
-                        lastName: profile.name.familyName,
-                        googleId: profile.id,
-                        email: profile.email,
-                    });
-                    await newUser.save();
-                    return done(null, newUser);
-                }
-                return done(null, currentUser);
+
+                const newUser = new UserModel({
+                    firstName: profile.name.givenName,
+                    lastName: profile.name.familyName,
+                    googleId: profile.id,
+                    email: profile.emails[0]?.value,
+                });
+                await newUser.save();
+                return done(null, newUser);
+                
             } catch (error) {
                 console.error('Error in Google OAuth Strategy:', error);
                 return done(error);
