@@ -12,11 +12,11 @@ const warrantySchema = new mongoose.Schema({
         type: Date,
         sparse: true,
     },
-    warrantyDuration: { //this stores 5 of 5 months
+    warrantyDuration: { //stores number of months/years
         type: Number, 
         required: true,
     },
-    warrantyDurationUnit: {  //this stores month of 5 month
+    warrantyDurationUnit: {  //stores "Year" or "Month"(time unit)
         type: String,
         enum: ["Year", "Month"],
         required: true,
@@ -33,6 +33,15 @@ const warrantySchema = new mongoose.Schema({
         type: String,
         enum: ["Active", "Expired"],
         default: "Active",
+    },
+    receiptPhoto: {
+        type: String, //image url
+    },
+    warrantyCardPhoto: {
+        type: String,
+    },
+    productPhoto: {
+        type: String
     },
 });
 
