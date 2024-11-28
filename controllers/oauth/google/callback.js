@@ -6,7 +6,7 @@
 exports.googleCallback = (req, res) => {
      // On successful login/signup, redirect to the home/dashboard page
      if (req.user) {
-        res.redirect(`${process.env.FRONTEND_URI}/dashboard`);
+        res.redirect(`${process.env.FRONTEND_URI}/home`);
     } else {
         res.redirect('/login'); // If the user is not authenticated, redirect to the login page
     }
