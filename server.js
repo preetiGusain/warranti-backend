@@ -61,6 +61,9 @@ app.use(passport.session());
 app.use('/auth', require('./routes/auth'));
 app.use('/oauth', require('./routes/oauth'));
 
+//Warranty Routes
+app.use('/warrantyRoutes', require('./routes/warrantyRoutes'));
+
 //Root endpoint
 app.get('/', (req, res) => {
     res.json({ message: 'Backend server running' });
