@@ -71,6 +71,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/protected', checkLogin, (req, res) => {
+    res.redirect(`${process.env.FRONTEND_URI}/dashboard`);
     res.send('Hello');
 });
 
