@@ -52,6 +52,7 @@ passport.use(
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: `${process.env.BACKEND_URI}/oauth/google/callback`,
+        passReqToCallback: true,
     },
         async (accessToken, refreshToken, profile, done) => {
             console.log(profile);
@@ -81,7 +82,7 @@ passport.use(
                     email: profile.emails[0]?.value,
                 });
                 await newUser.save();
-                return done(null, newUser);
+                return done(null, profile);
 
             } catch (error) {
                 console.error('Error in Google OAuth Strategy:', error);

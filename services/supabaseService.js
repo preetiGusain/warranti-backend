@@ -13,7 +13,6 @@ const uploadFile = async (file, userId, fileType) => {
     try {
         //Unique file name using timestamp
         const uniqueFileName = `${Date.now()}-${path.basename(file.name)}`;
-
         const folderPath = `${userId}/${fileType}`;
         const filePath = `${folderPath}/${uniqueFileName}`;
 
@@ -33,7 +32,13 @@ const uploadFile = async (file, userId, fileType) => {
         // Get the public URL of the uploaded file
         const { publicURL } = supabase.storage
             .from('warranty-files')
-            .getPublicUrl(data.path);
+            .getPublicUrl(data.path, {
+                transform: {
+                    width: 100,
+                    height: 100,
+                    resize: 'cover',
+                },
+            });
 
         return publicURL; // Return the file's public URL
     } catch (error) {

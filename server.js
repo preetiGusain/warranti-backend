@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const MongoStore = require('connect-mongo');
+const { checkLogin } = require('./controllers/auth/checkLogin');
 
 dotenv.config();
 const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET', 'FRONTEND_URI'];
@@ -61,12 +62,16 @@ app.use(passport.session());
 app.use('/auth', require('./routes/auth'));
 app.use('/oauth', require('./routes/oauth'));
 
-//Warranty Routes
-app.use('/warrantyRoutes', require('./routes/warrantyRoutes'));
+// //Warranty Routes
+// app.use('/warrantyRoutes', require('./routes/warrantyRoutes'));
 
 //Root endpoint
 app.get('/', (req, res) => {
     res.json({ message: 'Backend server running' });
+});
+
+app.get('/protected', checkLogin, (req, res) => {
+    res.send('Hello');
 });
 
 //Handle Errors
