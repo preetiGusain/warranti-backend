@@ -4,7 +4,8 @@
  * @access  Public
  */
 exports.logout = async (req, res, next) => {
-    req.logOut;
+    req.logout;
+    req.session.destroy();
     res.json({
         message: 'Logged out Successfully!'
     });

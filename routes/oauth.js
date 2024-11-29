@@ -12,7 +12,7 @@ router.get('/google', passport.authenticate('google', {
 
 // Handling the Google OAuth callback route
 router.get('/google/callback',
-    passport.authenticate('google', {successRedirect:'/protected', failureRedirect: '/login' }),
+    passport.authenticate('google', {successRedirect: `${process.env.FRONTEND_URI}/dashboard`, failureRedirect: '/login' }),
     googleCallback
 );
 

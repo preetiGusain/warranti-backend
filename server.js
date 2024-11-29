@@ -70,10 +70,6 @@ app.get('/', (req, res) => {
     res.json({ message: 'Backend server running' });
 });
 
-app.get('/protected', checkLogin, (req, res) => {
-    res.send('Hello');
-});
-
 //Handle Errors
 app.use(function (error, req, res, next) {
     res.status(error.status || 500).send({
