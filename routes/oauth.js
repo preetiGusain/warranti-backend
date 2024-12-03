@@ -16,7 +16,7 @@ router.get(
     '/google/callback',
     passport.authenticate('google', {failureRedirect: "/"}),
     function (req, res) {
-        res.redirect(`${process.env.FRONTEND_URI}/Home`); 
+        res.redirect(`${process.env.FRONTEND_URI}/home`); 
       }
 );
 
