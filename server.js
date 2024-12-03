@@ -11,7 +11,6 @@ const MongoStore = require('connect-mongo');
 const bcrypt = require("bcryptjs");
 const localStrategy = require('passport-local').Strategy;
 const User = require('./models/users');
-const path = require('path');
 
 dotenv.config();
 const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET', 'FRONTEND_URI'];
@@ -26,7 +25,7 @@ require('./config/passport');
 // CORS configuration
 app.use(
     cors({
-        origin: 'https://warranti-ui.onrender.com',
+        origin: process.env.FRONTEND_URI,
         methods: 'GET,POST,PUT,DELETE',
         credentials: true,
     })
@@ -118,13 +117,6 @@ app.get("/user/profile", async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   });
-
-// Serve React App for any unknown route
-app.use(express.static(path.join(__dirname, 'build')));
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
