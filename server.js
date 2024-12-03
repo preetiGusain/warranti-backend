@@ -25,9 +25,10 @@ require('./config/passport');
 // CORS configuration
 app.use(
     cors({
-        origin: process.env.FRONTEND_URI,
+        origin: 'https://warranti-ui.onrender.com',
         methods: 'GET,POST,PUT,DELETE',
         credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
     })
 );
 
@@ -76,7 +77,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: true,
+            secure: process.env.NODE_ENV === 'production',
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
         },
