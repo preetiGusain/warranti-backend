@@ -5,15 +5,19 @@ const { googleCallback } = require('../controllers/oauth/google/callback');
 const router = express.Router();
 
 // Route to start OAuth flow
-router.get('/google', passport.authenticate('google', {
-    scope: ['profile', 'email'], 
-}));
+router.get(
+    '/google', 
+    passport.authenticate('google', {scope: ['profile', 'email'],})
+);
 
 
 // Handling the Google OAuth callback route
-router.get('/google/callback',
-    passport.authenticate('google', {successRedirect: `${process.env.FRONTEND_URI}/dashboard`, failureRedirect: '/login' }),
-    googleCallback
+router.get(
+    '/google/callback',
+    passport.authenticate('google', {failureRedirect: "/"}),
+    function (req, res) {
+        res.redirect(`${process.env.FRONTEND_URI}/home`); 
+      }
 );
 
 module.exports = router;

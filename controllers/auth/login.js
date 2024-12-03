@@ -5,35 +5,19 @@ const passport = require('passport');
  * @access  Public
  */
 exports.login = async (req, res, next) => {
-    passport.authenticate('login', async (error, user, info) => {
-        try {
-            if (error) {
-                console.error('Login error:', error);
-                return res.status(500).json({
-                    message: 'Something went wrong',
-                    error: error || 'Internal server error',
-                });
-            }
-
-            // If no user is returned
-            if (!user) {
-                return res.status(400).json({
-                    message: 'User does not exist',
-                    info: info || 'Unknown issue',
-                });
-            }
-
-            req.login(user, async (error) => {
-                if (error) {
-                    res.status(500).json({
-                        message: 'Something went wrong',
-                        error: error || 'Internal server error',
-                    })
-                }
-                return res.json({ user, info });
-            });
-        } catch (error) {
-            return next(error);
+    passport.authenticate("local", (err, user, info) => {
+        if (err) {
+            console.log(err);
+          return res.status(500).json({ message: "Internal server error" });
         }
-    })(req, res, next);
+        if (!user) {
+          return res.status(401).json({ message: "Incorrect email or password" });
+        }
+        req.logIn(user, (err) => {
+          if (err) {
+            return res.status(500).json({ message: "Internal server error" });
+          }
+          return res.status(200).json({ message: "Login successful", user });
+        });
+      })(req, res, next);
 }
