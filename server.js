@@ -3,7 +3,7 @@ const session = require('express-session');
 const compression = require('compression');
 const cors = require('cors');
 const checkEnvVariables = require('dotenv-verifier');
-import cookieParser from 'cookie-parser';
+const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
