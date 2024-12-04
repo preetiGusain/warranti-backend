@@ -3,6 +3,7 @@ const session = require('express-session');
 const compression = require('compression');
 const cors = require('cors');
 const checkEnvVariables = require('dotenv-verifier');
+import cookieParser from 'cookie-parser';
 const connectDB = require('./config/db');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
@@ -30,6 +31,7 @@ app.use(
         credentials: true,
     })
 );
+app.use(cookieParser());
 
 //Passport configuration
 passport.use(
@@ -105,7 +107,8 @@ app.get('/', (req, res) => {
     res.json({ message: 'Backend server running' });
 });
 
-app.get("/user/profile", async (req, res) => {
+app.get('/user/profile', async (req, res) => {
+    console.log("request object", req);
     try {
       if (req.user) {
         return res.json({ user: req.user });
