@@ -20,15 +20,9 @@ app.use(passport.initialize());
 
 require('./config/passport');
 
-
-
 //Backend Routes
 app.use('/auth', require('./routes/auth'));
 app.use('/oauth', require('./routes/oauth'));
-
-app.get('/user/profile', passport.authenticate('jwt', { session: false }) ,(req,res)=>{
-  res.send(`THIS IS UR PROFILE MAAANNNN ${req.user}`)
-});
 
 app.listen(process.env.PORT, () => {
     console.log(`Server running on port ${process.env.PORT}`);

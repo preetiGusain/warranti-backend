@@ -5,9 +5,8 @@ const { signup } = require("../controllers/auth/signup");
 
 const router = express.Router({ mergeParams: true });
 
+router.use('/signup', signup);
 router.use('/login', login);
 router.use('/logout', logout);
-router.use('/signup', signup);
-
 
 module.exports = router;

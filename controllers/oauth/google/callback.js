@@ -1,14 +1,36 @@
+const User = require("../../../models/users");
+const { getTokenResponse } = require("../../utils/getTokenResponse");
+
 /**
- * @desc    handles Google's auth callback
- * @route   GET /oauth/google/callback
+ * @desc    Signup the customer
+ * @route   POST /oauth/google/callback
  * @access  Public
  */
-exports.googleCallback = (req, res) => {
-     // On successful login/signup, redirect to the home/dashboard page
-     if (req.user) {
-        res.redirect(`${process.env.FRONTEND_URI}`);
-    } else {
-        res.redirect('/login'); // If the user is not authenticated, redirect to the login page
-    }
-}
+exports.googleCallback = async (req, res, next) => {
+    const { id, displayName, emails, photos } = req.user;
+    try {
+        let user = await User.findOne({ email: emails[0].value });
 
+        if (user) {
+            // If the user exists, update their Google ID and profile information
+            user.googleId = id;
+            user.username = displayName;
+            user.profilePicture = photos[0].value;
+            await user.save();
+        } else {
+            // If the user doesn't exist, create a new user
+            user = new User({
+                googleId: id,
+                username: displayName,
+                email: emails[0].value,
+                profilePicture: photos[0].value,
+            });
+            await user.save();
+        }
+
+        getTokenResponse(user, 200, res, true);
+    } catch (error) {
+        console.error("Error handling user after Google authentication", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
