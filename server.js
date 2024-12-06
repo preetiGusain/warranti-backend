@@ -8,7 +8,7 @@ const passport = require('passport');
 const { userAuthorized } = require('./middleware/userAuth.js');
 
 dotenv.config();
-const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET', 'FRONTEND_URI'];
+const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'FRONTEND_URI', 'JWT_SECRET', 'JWT_COOKIE_EXPIRE'];
 checkEnvVariables(requiredVariables);
 connectDB();
 

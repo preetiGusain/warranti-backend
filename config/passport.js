@@ -1,8 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-
 const User = require('../models/users');
-require("dotenv").config();
 
 //Google OAuth Strategy
 passport.use(
@@ -14,8 +12,6 @@ passport.use(
             scope: ["profile", "email", "displayName"],
         },
         function(accessToken, refreshToken, profile, cb) {
-            //console.log(accessToken, refreshToken, profile)
-            console.log("GOOGLE BASED OAUTH VALIDATION GETTING CALLED")
             return cb(null, profile)
         }
     )

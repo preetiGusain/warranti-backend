@@ -18,7 +18,7 @@ var userSchema = new mongoose.Schema(
 userSchema.methods.generateJSONWebToken = function (next) {
   try {
     const token = jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRE
+      expiresIn: process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60
     });
     return token;
   } catch (error) {
