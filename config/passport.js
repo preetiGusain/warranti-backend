@@ -8,7 +8,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: `${BACKEND_URI}/oauth/google/callback`,
+            callbackURL: `${process.env.BACKEND_URI}/oauth/google/callback`,
             scope: ["profile", "email", "displayName"],
         },
         function(accessToken, refreshToken, profile, cb) {
