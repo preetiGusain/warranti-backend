@@ -24,8 +24,6 @@ require('./config/passport');
 //Backend Routes
 app.use('/auth', require('./routes/auth'));
 app.use('/oauth', require('./routes/oauth'));
-
-app.use(userAuthorized);
 app.use('/user', require('./routes/user'));
 
 app.listen(process.env.PORT, () => {
