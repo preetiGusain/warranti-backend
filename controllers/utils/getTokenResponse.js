@@ -20,7 +20,7 @@ exports.getTokenResponse = (model, statusCode, res, isOauth) => {
 
     if (isOauth) {
         res.cookie("token", token, options);
-        res.redirect(`${process.env.FRONTEND_URI}/warranti-ui/home`);
+        res.redirect(`${process.env.FRONTEND_URI}/home?token=${token}`);
     } else {
         return res
             .status(statusCode)
