@@ -5,10 +5,9 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const dotenv = require('dotenv');
 const passport = require('passport');
-const { userAuthorized } = require('./middleware/userAuth.js');
 
 dotenv.config();
-const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'FRONTEND_URI', 'JWT_SECRET', 'JWT_COOKIE_EXPIRE'];
+const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'FRONTEND_URI', 'JWT_SECRET', 'JWT_COOKIE_EXPIRE', 'SUPABASE_URL', 'SUPABASE_KEY'];
 checkEnvVariables(requiredVariables);
 connectDB();
 

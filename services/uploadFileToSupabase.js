@@ -1,5 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
-const path = require('path');
+const { decode } = require('base64-arraybuffer');
+
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 /**
@@ -9,42 +10,33 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
  * @param {String} fileType - The type of file (i.e, 'receipts', 'warranty-cards', 'product-photos').
  * @returns {String|null} - The public URL of the uploaded file or null if an error occurs.
  */
-const uploadFile = async (file, userId, fileType) => {
+exports.uploadFileToSupabase = async (file, userId, warrantyId, fileName) => {
     try {
         //Unique file name using timestamp
-        const uniqueFileName = `${Date.now()}-${path.basename(file.name)}`;
-        const folderPath = `${userId}/${fileType}`;
-        const filePath = `${folderPath}/${uniqueFileName}`;
-
+        const fileBase64 = decode(file.buffer.toString("base64"));
+        
         // Uploading the file to Supabase
         const { data, error } = await supabase.storage
             .from('warranty-files')
-            .upload(filePath, file.data, {
-                cacheControl: '3600',
-                upsert: false,
+            .upload(`${userId}/${warrantyId}/${fileName}.jpg`, fileBase64, {
+                contentType: "image/jpg",
+                upsert: false
             });
 
         if (error) {
+            console.log(error);
             console.error('Error uploading file:', error.message);
             return null;
         }
 
         // Get the public URL of the uploaded file
-        const { publicURL } = supabase.storage
+        const fileDetail = await supabase.storage
             .from('warranty-files')
-            .getPublicUrl(data.path, {
-                transform: {
-                    width: 100,
-                    height: 100,
-                    resize: 'cover',
-                },
-            });
+            .getPublicUrl(data.path);
 
-        return publicURL; // Return the file's public URL
+        return fileDetail.data.publicUrl; // Return the file's public URL
     } catch (error) {
         console.error('Unexpected error uploading file:', error.message);
         return null;
     }
 };
-
-module.exports = { uploadFile };
