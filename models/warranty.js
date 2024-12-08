@@ -3,23 +3,23 @@ const mongoose = require('mongoose');
 const warrantySchema = new mongoose.Schema({
     productName: {
         type: String,
-        required: true,
+        //required: true,
     },
     productId: {
         type: String,
     },
     purchaseDate: {
-        type: Date,
+        type: String,
         sparse: true,
     },
     warrantyDuration: { //stores number of months/years
-        type: Number, 
-        required: true,
+        type: String, 
+        //required: true,
     },
     warrantyDurationUnit: {  //stores "Year" or "Month"(time unit)
         type: String,
         enum: ["Year", "Month"],
-        required: true,
+        //required: true,
     },
     warrantyEndDate: {
         type: Date,

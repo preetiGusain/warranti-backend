@@ -25,6 +25,7 @@ require('./config/passport');
 app.use('/auth', require('./routes/auth'));
 app.use('/oauth', require('./routes/oauth'));
 app.use('/user', require('./routes/user'));
+app.use('/warranty', require('./routes/warranty'))
 
 app.listen(process.env.PORT, () => {
     console.log(`Server running on port ${process.env.PORT}`);
