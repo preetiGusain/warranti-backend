@@ -16,10 +16,10 @@ const warrantySchema = new mongoose.Schema({
         type: String, 
         //required: true,
     },
-    warrantyDurationUnit: {  //stores "Year" or "Month"(time unit)
+    warrantyDurationUnit: {  //stores "Years" or "Months"(time unit)
         type: String,
-        enum: ["Year", "Month"],
-        //required: true,
+        enum: ['Year', 'Month'],
+        required: true,
     },
     warrantyEndDate: {
         type: Date,
@@ -34,8 +34,9 @@ const warrantySchema = new mongoose.Schema({
         enum: ["Active", "Expired"],
         default: "Active",
     },
+    //Image URL's
     receiptPhoto: {
-        type: String, //image url
+        type: String,
     },
     warrantyCardPhoto: {
         type: String,

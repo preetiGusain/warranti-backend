@@ -76,8 +76,6 @@ exports.create = async (req, res, next) => {
             message: "Warranty created successfully", 
             warranty: updatedWarranty 
         });
-
-        getTokenResponse(req.user, 200, res);
     } catch (error) {
         console.error('Error in creating warranty:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
