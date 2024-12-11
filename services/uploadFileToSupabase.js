@@ -12,15 +12,21 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
  */
 exports.uploadFileToSupabase = async (file, userId, warrantyId, fileName) => {
     try {
-        //Unique file name using timestamp
+         // Validate input
+         if (!file || !file.buffer || !file.mimetype) {
+            throw new Error("Invalid file object. Ensure it has 'buffer' and 'mimetype' properties.");
+        }
+
+        // Decode file to ArrayBuffer
         const fileBase64 = decode(file.buffer.toString("base64"));
+        const filePath = `${userId}/${warrantyId}/${fileName}`;
         
         // Uploading the file to Supabase
         const { data, error } = await supabase.storage
             .from('warranty-files')
-            .upload(`${userId}/${warrantyId}/${fileName}.jpg`, fileBase64, {
-                contentType: "image/jpg",
-                upsert: false
+            .upload(filePath, fileBase64, {
+                contentType: file.mimetype, // Dynamically set content type
+                upsert: false               // Prevent overwriting existing files
             });
 
         if (error) {
@@ -30,11 +36,16 @@ exports.uploadFileToSupabase = async (file, userId, warrantyId, fileName) => {
         }
 
         // Get the public URL of the uploaded file
-        const fileDetail = await supabase.storage
+        const { data: urlData, error: urlError } = supabase.storage
             .from('warranty-files')
-            .getPublicUrl(data.path);
+            .getPublicUrl(filePath);
 
-        return fileDetail.data.publicUrl; // Return the file's public URL
+            if (urlError) {
+                console.error('Error fetching public URL:', urlError.message);
+                return null;
+            }
+
+        return urlData.publicUrl; // Return the file's public URL
     } catch (error) {
         console.error('Unexpected error uploading file:', error.message);
         return null;

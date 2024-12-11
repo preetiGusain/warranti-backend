@@ -9,15 +9,11 @@ const { getTokenResponse } = require("../utils/getTokenResponse");
  */
 exports.create = async (req, res, next) => {
     try {
-        // Allowing warranty images to be null temporarily
-        // const warrantyCard = req.files['warrantyCard'][0];
-        // const receipt = req.files['receipt'][0];
-        // const product = req.files['product'][0];
         const warrantyCard = req.files['warrantyCard'] ? req.files['warrantyCard'][0] : null;
         const receipt = req.files['receipt'] ? req.files['receipt'][0] : null;
         const product = req.files['product'] ? req.files['product'][0] : null;
-        const { productName, warrantyDuration, warrantyDurationUnit, purchaseDate, productId } = req.body;
 
+        const { productName, warrantyDuration, warrantyDurationUnit, purchaseDate, productId } = req.body;
         const warranty = new Warranty({
             user: req.user._id,
             productName,
@@ -26,28 +22,62 @@ exports.create = async (req, res, next) => {
             warrantyDurationUnit,
             purchaseDate
         });
-        const savedWarranty = await warranty.save();
 
-        let update = {};
+        const savedWarranty = await warranty.save();
+        const update = {};
 
         if (warrantyCard) {
-            const warrantyCardPhotoURL = await uploadFileToSupabase(warrantyCard, req.user._id, warranty._id, "warrantyCard");
-            update['warrantyCardPhoto'] = warrantyCardPhotoURL;
+            try {
+                const warrantyCardPhotoURL = await uploadFileToSupabase(
+                    warrantyCard, 
+                    req.user._id, 
+                    warranty._id, 
+                    "warrantyCard"
+                );
+                update['warrantyCardPhoto'] = warrantyCardPhotoURL;
+            } catch (error) {
+                console.error("Error uploading warranty card:", error);
+            }
         }
         if (receipt) {
-            const receiptPhotoURL = await uploadFileToSupabase(receipt, req.user._id, warranty._id, "receipt");
-            update['receiptPhoto'] = receiptPhotoURL;
+            try {
+                const receiptPhotoURL = await uploadFileToSupabase(
+                    receipt, 
+                    req.user._id, 
+                    warranty._id, 
+                    "receipt"
+                );
+                update['receiptPhoto'] = receiptPhotoURL;
+            } catch (error) {
+                console.error("Error uploading receipt:", error);
+            }
         }
         if (product) {
-            const productPhotoURL = await uploadFileToSupabase(product, req.user._id, warranty._id, "product");
-            update['productPhoto'] = productPhotoURL;
+            try {
+                const productPhotoURL = await uploadFileToSupabase(
+                    product, 
+                    req.user._id, 
+                    warranty._id, 
+                    "product"
+                );
+                update['productPhoto'] = productPhotoURL;
+            } catch (error) {
+                console.error("Error uploading product photo:", error);
+            }
         }
 
-        const updatedWarranty = await Warranty.findByIdAndUpdate(savedWarranty._id, update, { new: true });
-        res.status(200).json({ message: "Warranty created successfully", updatedWarranty });
+        const updatedWarranty = await Warranty.findByIdAndUpdate(
+            savedWarranty._id, 
+            update, 
+            { new: true }
+        );
+        
+        res.status(200).json({ 
+            message: "Warranty created successfully", 
+            warranty: updatedWarranty 
+        });
 
         getTokenResponse(req.user, 200, res);
-        
     } catch (error) {
         console.error('Error in creating warranty:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
