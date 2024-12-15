@@ -20,6 +20,11 @@ app.use(passport.initialize());
 
 require('./config/passport');
 
+//Root endpoint
+app.get('/keep-alive', (req, res) => {
+    res.json({ message: 'Backend server running' });
+});
+
 //Backend Routes
 app.use('/auth', require('./routes/auth'));
 app.use('/oauth', require('./routes/oauth'));

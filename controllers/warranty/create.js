@@ -1,6 +1,5 @@
 const Warranty = require("../../models/warranty");
 const { uploadFileToSupabase } = require("../../services/uploadFileToSupabase");
-const { getTokenResponse } = require("../utils/getTokenResponse");
 
 /**
  * @desc    Creates warranty for the customer
