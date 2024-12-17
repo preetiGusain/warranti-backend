@@ -7,7 +7,14 @@ const Warranty = require("../../models/warranty");
  */
 exports.warranties = async (req, res, next) => {
     try {
-        const warranties = await Warranty.find();
+        const warranties = await Warranty.find({ user: req.user._id});
+
+        if (!warranties.length) {
+            return res.status(404).json({
+                message: 'No warranties found for this user.',
+                warranties: [],
+            });
+        }
         console.log(warranties);
         res.status(200).json({
             message: 'Warranties found successfully!',
