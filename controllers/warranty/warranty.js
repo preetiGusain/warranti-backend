@@ -7,6 +7,8 @@ const Warranty = require("../../models/warranty");
  */
 exports.warranty = async (req, res, next) => {
     try {
+        console.log("Fetching warranty with id : " + req.params.id);
+        
         const warrantyId = req.params.id;
         const findWarranty = await Warranty.findById(warrantyId);
 

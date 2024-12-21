@@ -12,12 +12,17 @@ const router = express.Router();
 
 
 router.use(userAuthorized);
-router.get('/warranties', warranties);
-router.get('/warranties/:id', warranty);
+router.get('/', warranties);
+router.get('/:id', warranty);
 router.post('/create', upload.fields([
     { name: 'warrantyCard', maxCount: 1 },
     { name: 'receipt', maxCount: 1 },
     { name: 'product', maxCount: 1 }]), create);
-router.delete('/warranties/delete/:id', deleteWarranty);
+router.delete('/:id', deleteWarranty);
+router.put('/:id', upload.fields([
+    { name: 'warrantyCard', maxCount: 1 },
+    { name: 'receipt', maxCount: 1 },
+    { name: 'product', maxCount: 1 }]),
+    editWarranty);
 
 module.exports = router;

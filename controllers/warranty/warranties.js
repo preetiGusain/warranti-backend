@@ -2,11 +2,13 @@ const Warranty = require("../../models/warranty");
 
 /**
  * @desc    Gets warranties of a customer
- * @route   GET /warranty/warranties
+ * @route   GET /warranties
  * @access  Public
  */
 exports.warranties = async (req, res, next) => {
     try {
+        console.log("Fetching warranties for user : " + req?.user?._id);
+        
         const warranties = await Warranty.find({ user: req.user._id});
 
         if (!warranties.length) {

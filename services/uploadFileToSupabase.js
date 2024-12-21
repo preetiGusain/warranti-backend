@@ -26,7 +26,7 @@ exports.uploadFileToSupabase = async (file, userId, warrantyId, fileName) => {
             .from('warranty-files')
             .upload(filePath, fileBase64, {
                 contentType: file.mimetype, // Dynamically set content type
-                upsert: false               // Prevent overwriting existing files
+                upsert: true               // Allow overwriting existing files
             });
 
         if (error) {
