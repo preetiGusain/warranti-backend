@@ -7,7 +7,8 @@ const { getTokenResponse } = require("../../utils/getTokenResponse");
  * @access  Public
  */
 exports.appLogin = async (req, res, next) => {
-    const { id, displayName, email, photos } = req.body;
+    const { id, displayName, email, photoUrl } = req.body;
+    console.log("Request received", req.body);
     try {
         let user = await User.findOne({ email: email });
         console.log("user from DB ",user);
@@ -16,15 +17,15 @@ exports.appLogin = async (req, res, next) => {
             // If the user exists, update their Google ID and profile information
             user.googleId = id;
             user.username = displayName;
-            user.profilePicture = photos[0].value;
+            user.profilePicture = photoUrl;
             await user.save();
         } else {
             // If the user doesn't exist, create a new user
             user = new User({
                 googleId: id,
                 username: displayName,
-                email: emails[0].value,
-                profilePicture: photos[0].value,
+                email: email,
+                profilePicture: photoUrl,
             });
             await user.save();
         }

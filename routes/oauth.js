@@ -20,7 +20,7 @@ router.get(
 );
 
 // Route for App Google OAuth
-router.get(
+router.post(
     '/google/app',
     appLogin
 )
