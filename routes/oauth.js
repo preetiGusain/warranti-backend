@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const { googleCallback } = require('../controllers/oauth/google/callback');
+const { appLogin } = require('../controllers/oauth/google/appLogin');
 
 const router = express.Router();
 
@@ -17,5 +18,11 @@ router.get(
     passport.authenticate('google', { session: false, failureRedirect: "/" }),
     googleCallback
 );
+
+// Route for App Google OAuth
+router.get(
+    '/google/app',
+    appLogin
+)
 
 module.exports = router;
