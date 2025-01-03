@@ -2,12 +2,13 @@ const Warranty = require("../../models/warranty");
 
 /**
  * @desc    Gets warranties of a customer
- * @route   GET /warranties
+ * @route   GET /warranty/
  * @access  Public
  */
 exports.warranties = async (req, res, next) => {
     try {
         console.log("Fetching warranties for user : " + req?.user?._id);
+        console.log("Logging request",req);
         
         const warranties = await Warranty.find({ user: req.user._id});
 
@@ -17,6 +18,20 @@ exports.warranties = async (req, res, next) => {
                 warranties: [],
             });
         }
+
+        // Check and update the status of each warranty
+        const currentDate = new Date();
+
+        for (let i = 0; i < warranties.length; i++) {
+            const warranty = warranties[i];
+            const warrantyEndDate = new Date(warranty.warrantyEndDate);
+
+            if (warrantyEndDate < currentDate && warranty.status === "Active") {
+                warranty.status = "Expired";
+                await warranty.save();
+            }
+        }
+
         console.log(warranties);
         res.status(200).json({
             message: 'Warranties found successfully!',

@@ -1,3 +1,4 @@
+const { calculateWarrantyEndDate } = require("../../middleware/calculateWarrantyEndDate");
 const Warranty = require("../../models/warranty");
 const { uploadFileToSupabase } = require("../../services/uploadFileToSupabase");
 
@@ -13,13 +14,18 @@ exports.create = async (req, res, next) => {
         const product = req.files['product'] ? req.files['product'][0] : null;
 
         const { productName, warrantyDuration, warrantyDurationUnit, purchaseDate, productId } = req.body;
+        const warrantyEndDate = calculateWarrantyEndDate(purchaseDate, warrantyDuration, warrantyDurationUnit);
+        const warrantyStatus = new Date() > warrantyEndDate ? 'Expired' : 'Active';
+
         const warranty = new Warranty({
             user: req.user._id,
             productName,
             productId,
             warrantyDuration,
             warrantyDurationUnit,
-            purchaseDate
+            purchaseDate,
+            warrantyEndDate,
+            status: warrantyStatus
         });
 
         const savedWarranty = await warranty.save();

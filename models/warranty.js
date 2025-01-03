@@ -9,11 +9,11 @@ const warrantySchema = new mongoose.Schema({
         type: String,
     },
     purchaseDate: {
-        type: String,
+        type: Date,
         sparse: true,
     },
     warrantyDuration: { //stores number of months/years
-        type: String, 
+        type: String,
         //required: true,
     },
     warrantyDurationUnit: {  //stores "Years" or "Months"(time unit)
