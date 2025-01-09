@@ -8,7 +8,7 @@ const Warranty = require("../../models/warranty");
 exports.warranty = async (req, res, next) => {
     try {
         console.log("Fetching warranty with id : " + req.params.id);
-        
+
         const warrantyId = req.params.id;
         const findWarranty = await Warranty.findById(warrantyId);
 
@@ -28,9 +28,15 @@ exports.warranty = async (req, res, next) => {
             await findWarranty.save();
         }
 
+        // Format the warranty end date
+        const formattedEndDate = formatDate(warrantyEndDate);
+
         res.status(200).json({
             message: "Warranty found successfully!",
-            warranty: findWarranty
+            warranty: {
+                ...findWarranty.toObject(),
+                formattedEndDate,
+            },
         });
     } catch (error) {
         console.error(error);
@@ -40,3 +46,11 @@ exports.warranty = async (req, res, next) => {
         });
     }
 };
+
+// Utility function to format a date
+function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
