@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 
 // Store JWT in cookie
-exports.getTokenResponse = (model, statusCode, res, isOauth) => {
-    // token
+exports.getTokenResponse = (model, statusCode, res, isOauth, refreshToken) => {
+    // Token
     const token = model.generateJSONWebToken();
 
-    // cookie options
+    // Cookie options
     const options = {
         expires: new Date(
             Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
@@ -13,7 +13,7 @@ exports.getTokenResponse = (model, statusCode, res, isOauth) => {
         httpOnly: true
     };
 
-    // in production cookie is secure
+    // Cookie needs to be secire in Production
     if (process.env.NODE_ENV == "production") {
         options.secure = true;
     }
@@ -25,6 +25,6 @@ exports.getTokenResponse = (model, statusCode, res, isOauth) => {
         return res
             .status(statusCode)
             .cookie("token", token, options)
-            .json({ success: true, user: model, token });
+            .json({ success: true, user: model, token: token, refreshToken: refreshToken });
     }
 };

@@ -17,6 +17,6 @@ exports.userAuthorized = async (req, res, next) => {
         next();
     } catch (error) {
         console.error("Error handling user authentication", error);
-        res.status(500).send("Internal Server Error");
+        res.status(401).send("Unauthorized");
     }
 };

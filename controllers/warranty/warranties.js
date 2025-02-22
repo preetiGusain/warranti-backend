@@ -8,7 +8,6 @@ const Warranty = require("../../models/warranty");
 exports.warranties = async (req, res, next) => {
     try {
         console.log("Fetching warranties for user : " + req?.user?._id);
-        console.log("Logging request",req);
         
         const warranties = await Warranty.find({ user: req.user._id});
 
@@ -32,7 +31,6 @@ exports.warranties = async (req, res, next) => {
             }
         }
 
-        console.log(warranties);
         res.status(200).json({
             message: 'Warranties found successfully!',
             warranties: warranties
