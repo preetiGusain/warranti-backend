@@ -22,6 +22,7 @@ require('./config/passport');
 
 //Root endpoint
 app.get('/keep-alive', (req, res) => {
+    console.log("keep-alive");
     res.json({ message: 'Backend server running' });
 });
 
