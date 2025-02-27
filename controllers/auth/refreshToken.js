@@ -9,24 +9,38 @@ const { getTokenResponse } = require('../utils/getTokenResponse');
  * @access  Public
  */
 exports.refreshToken = async (req, res, next) => {
+    console.log("=== Refresh Token API Hit ===");
+    console.log("Request Body:", req.body);
+
     const { refreshToken, id } = req.body;
-    console.log("Request received", req.body);
+
     try {
+        console.log("Fetching user from DB ",user);
         const user = await User.findById(id);
-        console.log("user from DB ",user);
         
         const userToken = await UserToken.findOne({ user: user._id});
+
         if(userToken && userToken.token && userToken.token === refreshToken) {
             try {
+                console.log("Verifying refresh token...");
                 const decoded = jwt.verify(userToken.token, process.env.JWT_SECRET);
             } catch (error) {
+                console.error("Refresh token verification failed. Deleting stale token.");
                 await UserToken.findOneAndDelete({ user: user._id});
                 throw new Error("Refresh token is stale!");
             }
-            const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+
+            console.log("Generating new refresh token...");
+            const newRefreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+            
+            console.log("Deleting old refresh token...");
             await UserToken.findOneAndDelete({ user: user._id});
-            await new UserToken({ user: user._id, token: refreshToken }).save();
-            getTokenResponse(user, 200, res, false, refreshToken);
+
+            console.log("Saving new refresh token to DB...");
+            await new UserToken({ user: user._id, token: newRefreshToken }).save();
+
+            console.log("Sending response with new refresh token...");
+            getTokenResponse(user, 200, res, false, newRefreshToken);
         } else if (!userToken) {
             throw new Error("Login again! No refresh token in db");
         } else if (userToken.token !== refreshToken) {

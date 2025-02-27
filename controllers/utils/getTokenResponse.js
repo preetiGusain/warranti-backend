@@ -13,7 +13,7 @@ exports.getTokenResponse = (model, statusCode, res, isOauth, refreshToken) => {
         httpOnly: true
     };
 
-    // Cookie needs to be secire in Production
+    // Cookie needs to be secure in Production
     if (process.env.NODE_ENV == "production") {
         options.secure = true;
     }
