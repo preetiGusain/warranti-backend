@@ -15,10 +15,11 @@ exports.refreshToken = async (req, res, next) => {
     const { refreshToken, id } = req.body;
 
     try {
-        console.log("Fetching user from DB ",user);
         const user = await User.findById(id);
-        
+        console.log("Fetching user from DB ",user);
+    
         const userToken = await UserToken.findOne({ user: user._id});
+        console.log(`User token for ${user._id} :`,userToken);
 
         if(userToken && userToken.token && userToken.token === refreshToken) {
             try {
