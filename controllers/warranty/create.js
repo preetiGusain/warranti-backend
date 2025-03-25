@@ -69,8 +69,13 @@ exports.create = async (req, res, next) => {
             } catch (error) {
                 console.error("Error uploading product photo:", error);
             }
+        } else {
+            // If no product image is uploaded, use a default image
+            const defaultProductPhotoURL = "https://unbwoaamlcjijcajyygm.supabase.co/storage/v1/object/public/images//default_product_image.png";
+            update['productPhoto'] = defaultProductPhotoURL;
         }
 
+        // Update the warranty with the images URLs
         const updatedWarranty = await Warranty.findByIdAndUpdate(
             savedWarranty._id, 
             update, 
