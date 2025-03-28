@@ -12,13 +12,17 @@ exports.signup = async (req, res, next) => {
 
         let user = await User.findOne({ email });
         if (user) {
-            if(user.googleId) throw new Error("Signin using google!");
-            throw new Error("User already exists!");
+            if(user.googleId) {
+                res.status(400).json({ success: false, message: "SignIn using google!" });
+                return;
+            }
+            res.status(400).json({ success: false, message: "User already exists! SignIn instead!"});
+            return;
         } else {
             user = new User({ username, email, password });
             await user.save();
-        }       
-        getTokenResponse(user, 200, res);
+        }     
+        return await getTokenResponse({req: req, user: user, statusCode: 200,res: res, isOauth: false});
     } catch (error) {
         console.error("Error registering user:", error);
         res.status(400).send(error);

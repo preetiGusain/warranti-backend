@@ -9,47 +9,46 @@ const { getTokenResponse } = require('../utils/getTokenResponse');
  * @access  Public
  */
 exports.refreshToken = async (req, res, next) => {
-    console.log("=== Refresh Token API Hit ===");
     console.log("Request Body:", req.body);
-
     const { refreshToken, id } = req.body;
+    // Checking if required fields are present or not
+    if (!id) {
+        res.status(400).send("id is a required field");
+        return;
+    }
+    if (!refreshToken) {
+        res.status(400).send("refreshToken is a required field");
+        return;
+    }
 
     try {
         const user = await User.findById(id);
-        console.log("Fetching user from DB ",user);
-    
-        const userToken = await UserToken.findOne({ user: user._id});
-        console.log(`User token for ${user._id} :`,userToken);
+        console.log("Fetching user from DB ", user);
 
-        if(userToken && userToken.token && userToken.token === refreshToken) {
+        const userToken = await UserToken.findOne({ user: user._id });
+        console.log(`User token for ${user._id} :`, userToken);
+
+        if (userToken && userToken.token && userToken.token === refreshToken) {
             try {
                 console.log("Verifying refresh token...");
                 const decoded = jwt.verify(userToken.token, process.env.JWT_SECRET);
             } catch (error) {
                 console.error("Refresh token verification failed. Deleting stale token.");
-                await UserToken.findOneAndDelete({ user: user._id});
-                throw new Error("Refresh token is stale!");
+                await UserToken.findOneAndDelete({ user: user._id });
+                res.status(400).send("Refresh token is stale!");
+                return;
             }
-
-            console.log("Generating new refresh token...");
-            const newRefreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
-            
-            console.log("Deleting old refresh token...");
-            await UserToken.findOneAndDelete({ user: user._id});
-
-            console.log("Saving new refresh token to DB...");
-            await new UserToken({ user: user._id, token: newRefreshToken }).save();
-
-            console.log("Sending response with new refresh token...");
-            getTokenResponse(user, 200, res, false, newRefreshToken);
+            return await getTokenResponse({ req: req, user: user, statusCode: 200, res: res, isOauth: false });
         } else if (!userToken) {
-            throw new Error("Login again! No refresh token in db");
+            res.status(400).send("Login again! No refresh token in db");
+            return;
         } else if (userToken.token !== refreshToken) {
-            throw new Error("Bad refresh token");
+            res.status(400).send("Bad refresh token");
+            return;
         }
-        
+
     } catch (error) {
         console.error("Error handling user after refresh token fails", error);
-        res.status(401).send("Internal Server Error");
+        res.status(501).send("Internal Server Error");
     }
 };

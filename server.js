@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const dotenv = require('dotenv');
 const passport = require('passport');
+const useragent = require('express-useragent');
 
 dotenv.config();
 const requiredVariables = ['PORT', 'MONGO_URI', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'FRONTEND_URI', 'JWT_SECRET', 'JWT_COOKIE_EXPIRE', 'SUPABASE_URL', 'SUPABASE_KEY'];
@@ -16,6 +17,7 @@ app.use(cors({credentials: true, origin: true}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(passport.initialize());
+app.use(useragent.express());
 
 
 require('./config/passport');

@@ -12,14 +12,18 @@ exports.login = async (req, res, next) => {
         const { email, password } = req.body;
         
         let user = await User.findOne({ email });
-        if(!user) throw new Error("User doesn't exist");
+        if(!user) {
+            res.status(400).json({ success: false, message: "User doesn't exist!" });
+            return;
+        }
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-            throw new Error("Password Incorrect");
+            res.status(400).json({ success: false, message: "Incorrect Password!" });
+            return;
         }
-        getTokenResponse(user, 200, res);
+        return await getTokenResponse({ req: req, user: user, statusCode: 200, res: res, isOauth: false});
     } catch (error) {
-        console.error("Error registering user:", error);
+        console.error("Bad request. Error logging in:", error);
         res.status(400).send(error);
     }
 }
