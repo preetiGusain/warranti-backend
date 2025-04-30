@@ -32,6 +32,7 @@ exports.refreshToken = async (req, res, next) => {
             try {
                 console.log("Verifying refresh token...");
                 const decoded = jwt.verify(userToken.token, process.env.JWT_SECRET);
+                console.log("Decoded token:", decoded);
             } catch (error) {
                 console.error("Refresh token verification failed. Deleting stale token.");
                 await UserToken.findOneAndDelete({ user: user._id });

@@ -1,6 +1,6 @@
 # Warranti Backend
 
-The backend for the [**Warranti**](https://github.com/preetiGusain/warranti_app) Flutter app, built with Node.js, Express, MongoDB, and Supabase. It handles user authentication, warranty management, and file uploads. This service connects with the frontend via RESTful APIs and is designed for scalability and security.
+The backend for the [**Warranti**](https://github.com/preetiGusain/warranti_app) Flutter app, built with Node.js, Express, MongoDB, and Cloudinary. It handles user authentication, warranty management, and file uploads. This service connects with the frontend via RESTful APIs and is designed for scalability and security.
 
 [![Google Play Store](https://img.shields.io/badge/Download%20on%20Google%20Play-FFD700?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.preeti.warranti_app&pcampaignid=web_share)
 
@@ -9,7 +9,7 @@ The backend for the [**Warranti**](https://github.com/preetiGusain/warranti_app)
 ## Features
 - JWT-based and Google OAuth user authentication
 - Warranty CRUD operations
-- File uploads (receipts, warranty cards, product images) stored on Supabase
+- File uploads (receipts, warranty cards, product images) stored on Cloudinary
 - Middleware for route protection
 - CORS and cookie handling for frontend communication
 - `.env` variable validation with [`dotenv-verifier`](https://github.com/preetiGusain/dotenv-verifier)
@@ -20,7 +20,7 @@ The backend for the [**Warranti**](https://github.com/preetiGusain/warranti_app)
 - **Backend Framework:** Express.js
 - **Database:** MongoDB
 - **Authentication:** Passport.js, JWT, Google OAuth2
-- **File Storage:** Supabase Storage
+- **File Storage:** Cloudinary Storage
 - **Utilities:** Multer, Dotenv, Cookie-Parser, Express-UserAgent
 
 ---
@@ -67,20 +67,22 @@ GOOGLE_CLIENT_SECRET
 FRONTEND_URI
 JWT_SECRET
 JWT_COOKIE_EXPIRE
-SUPABASE_URL
-SUPABASE_KEY
+CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET
+
 ```
 
 Use `.env` file to manage these.
 
 ---
 
-## File Uploads to Supabase
-Files like receipts, warranty cards, and product images are uploaded to a `warranty-files` bucket on Supabase. Files are structured as:
+## File Uploads to Cloudinary
+Files like receipts, warranty cards, and product images are uploaded to Cloudinary. Files are structured as:
 ```
 /userId/warrantyId/filename.ext
 ```
-Uploads are done using `uploadFileToSupabase()` in `services/uploadFileToSupabase.js`.
+Uploads are done using `uploadFileToCloudinary()` in `services/uploadFileToCloudinary.js`.
 
 ---
 

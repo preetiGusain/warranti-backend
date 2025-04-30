@@ -11,7 +11,7 @@ passport.use(
             callbackURL: `${process.env.BACKEND_URI}/oauth/google/callback`,
             scope: ["profile", "email", "displayName"],
         },
-        function(accessToken, refreshToken, profile, cb) {
+        function(token, refreshToken, profile, cb) {
             return cb(null, profile)
         }
     )

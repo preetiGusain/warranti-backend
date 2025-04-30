@@ -1,6 +1,6 @@
 const { calculateWarrantyEndDate } = require("../../middleware/calculateWarrantyEndDate");
 const Warranty = require("../../models/warranty");
-const { uploadFileToSupabase } = require("../../services/uploadFileToSupabase");
+const { uploadFileToCloudinary } = require("../../services/uploadFileToCloudinary");
 
 /**
  * @desc    Creates warranty for the customer
@@ -33,7 +33,7 @@ exports.create = async (req, res, next) => {
 
         if (warrantyCard) {
             try {
-                const warrantyCardPhotoURL = await uploadFileToSupabase(
+                const warrantyCardPhotoURL = await uploadFileToCloudinary(
                     warrantyCard, 
                     req.user._id, 
                     warranty._id, 
@@ -46,7 +46,7 @@ exports.create = async (req, res, next) => {
         }
         if (receipt) {
             try {
-                const receiptPhotoURL = await uploadFileToSupabase(
+                const receiptPhotoURL = await uploadFileToCloudinary(
                     receipt, 
                     req.user._id, 
                     warranty._id, 
@@ -59,7 +59,7 @@ exports.create = async (req, res, next) => {
         }
         if (product) {
             try {
-                const productPhotoURL = await uploadFileToSupabase(
+                const productPhotoURL = await uploadFileToCloudinary(
                     product, 
                     req.user._id, 
                     warranty._id, 
