@@ -36,7 +36,7 @@ exports.create = async (req, res, next) => {
                 const warrantyCardPhotoURL = await uploadFileToCloudinary(
                     warrantyCard, 
                     req.user._id, 
-                    warranty._id, 
+                    savedWarranty._id,
                     "warrantyCard"
                 );
                 update['warrantyCardPhoto'] = warrantyCardPhotoURL;
@@ -49,7 +49,7 @@ exports.create = async (req, res, next) => {
                 const receiptPhotoURL = await uploadFileToCloudinary(
                     receipt, 
                     req.user._id, 
-                    warranty._id, 
+                    savedWarranty._id, 
                     "receipt"
                 );
                 update['receiptPhoto'] = receiptPhotoURL;
@@ -57,12 +57,13 @@ exports.create = async (req, res, next) => {
                 console.error("Error uploading receipt:", error);
             }
         }
+        const defaultProductPhotoURL = "https://unbwoaamlcjijcajyygm.supabase.co/storage/v1/object/public/images//default_product_image.png";
         if (product) {
             try {
                 const productPhotoURL = await uploadFileToCloudinary(
                     product, 
                     req.user._id, 
-                    warranty._id, 
+                    savedWarranty._id, 
                     "product"
                 );
                 update['productPhoto'] = productPhotoURL;
@@ -71,7 +72,6 @@ exports.create = async (req, res, next) => {
             }
         } else {
             // If no product image is uploaded, use a default image
-            const defaultProductPhotoURL = "https://unbwoaamlcjijcajyygm.supabase.co/storage/v1/object/public/images//default_product_image.png";
             update['productPhoto'] = defaultProductPhotoURL;
         }
 
