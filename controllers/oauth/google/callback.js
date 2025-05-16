@@ -28,7 +28,7 @@ exports.googleCallback = async (req, res, next) => {
             await user.save();
         }
 
-        getTokenResponse(user, 200, res, true);
+        getTokenResponse({ req, user, statusCode: 200, res, isOauth: true });
     } catch (error) {
         console.error("Error handling user after Google authentication", error);
         res.status(500).send("Internal Server Error");
